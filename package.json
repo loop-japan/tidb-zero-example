@@ -1,0 +1,19 @@
+{
+  "name": "tidb-zero-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TiDB Zero demo scaffold for data import, vector search, and full-text search testing.",
+  "scripts": {
+    "dry-run": "node src/import-and-test.mjs --dry-run",
+    "demo": "node src/import-and-test.mjs",
+    "test": "node --test test/**/*.test.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.11.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
