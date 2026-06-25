@@ -7,6 +7,7 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 ## 構成
 
 - `src/import-and-test.ts`: テーブル作成、データ投入、ベクトル検索、全文検索を一括実行する TypeScript/Node.js CLI
+- `src/tidb-zero-env.ts`: TiDB Zero API レスポンスから `.env` を生成する TypeScript/Node.js CLI
 - `src/web-server.ts`: Web UI とステップ実行 API を提供するローカルサーバ
 - `src/tidb-demo.ts`: CLI と Web UI で共有する TiDB 接続/検索ロジック
 - `public/`: ブラウザからステップごとに TiDB Zero テストを実行するグラフィカル UI
@@ -21,6 +22,38 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 1. TiDB Cloud にログインし、TiDB Zero（または互換の TiDB Cloud Starter/Essential）クラスタを作成/申請します。
 2. Vector Search と FULLTEXT を検証したい場合は、対象リージョンが両機能をサポートしていることを確認します。TiDB 公式ドキュメントでは、Vector Search は Starter/Essential 等で利用可能、FULLTEXT index は一部 AWS リージョンの Starter/Essential でのみ利用可能とされています。
 3. クラスタ画面の **Connect** から Public endpoint / MySQL CLI の接続情報を取得し、ユーザー名（例: `<prefix>.root`）、ホスト、ポート、パスワード、DB 名を控えます。
+
+
+## TiDB Zero API レスポンスから `.env` を生成
+
+TiDB Zero の quickstart/API は `POST https://zero.tidbapi.com/v1beta1/instances` で一時インスタンスを作成し、レスポンスの `instance.connection` / `instance.connectionString` に接続情報を返します。このリポジトリでは、bash + `jq` ではなく pnpm script で `.env` を生成できます。
+
+```bash
+pnpm install
+
+# 新しい TiDB Zero インスタンスを作成し、tidb-zero.json と .env を生成
+pnpm tidb-zero:env -- --create
+
+# 既存の API レスポンスファイルを .env に変換（live API は呼ばない）
+pnpm tidb-zero:env -- --from tidb-zero.json
+```
+
+生成されるキーは `.env.example` と同じ `TIDB_HOST`, `TIDB_PORT`, `TIDB_USER`, `TIDB_PASSWORD`, `TIDB_DATABASE`, `TIDB_SSL`, `TIDB_RESET` です。`.env` と `tidb-zero.json` にはパスワードが含まれるため `.gitignore` 済みです。出力先が既に存在する場合は上書きしません。再生成したい場合だけ `--force` を付けてください。
+
+よく使うオプション:
+
+```bash
+# タグを指定して作成
+pnpm tidb-zero:env -- --create --tag my-demo
+
+# DB 名や SSL / reset フラグを明示
+pnpm tidb-zero:env -- --from tidb-zero.json --database test --ssl true --reset false
+
+# 秘密情報を書き込まず、redacted preview だけ表示
+pnpm tidb-zero:env -- --from tidb-zero.json --dry-run
+```
+
+`TIDB_ZERO_API_KEY` が設定されている場合は Bearer token として API リクエストに付与します。通常の quickstart と同じく不要な場合は未設定のままで構いません。
 
 ## CLI での実行方法
 

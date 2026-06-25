@@ -12,7 +12,8 @@
     "test": "node --import tsx --test test/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/src/import-and-test.js"
+    "start": "node dist/src/import-and-test.js",
+    "tidb-zero:env": "tsx src/tidb-zero-env.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
