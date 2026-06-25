@@ -6,13 +6,14 @@
 2. 機能要件を確認する。
    - Vector Search: `VECTOR(3)` 型と `VEC_COSINE_DISTANCE()` を利用する。
    - Full-text Search: `FULLTEXT KEY` と `MATCH(...) AGAINST(...)` を利用する。FULLTEXT は TiDB Cloud Starter/Essential の一部 AWS リージョンでのみサポートされるため、作成時に対応リージョンを選ぶ。
-3. Public endpoint を有効化し、Connect ダイアログから MySQL 接続情報を取得する。
-4. 接続情報を `.env` に設定する。パスワードや秘密情報は commit しない。
+3. TiDB Zero quickstart/API (`POST https://zero.tidbapi.com/v1beta1/instances`) または Connect ダイアログから MySQL 接続情報を取得する。
+4. `pnpm tidb-zero:env -- --create` で TiDB Zero API から直接 `.env` を生成するか、保存済みレスポンスを `pnpm tidb-zero:env -- --from tidb-zero.json` で変換する。パスワードや秘密情報は commit しない。
 
 ## 2. データ import
 
 ```bash
 pnpm install
+# 必要に応じて .env を生成: pnpm tidb-zero:env -- --create
 pnpm dry-run
 pnpm test
 pnpm typecheck
@@ -56,4 +57,4 @@ LIMIT 3;
 
 ## 5. ブロッカー
 
-この作業環境には TiDB Zero アカウント、クラスタ作成権限、接続先ホスト、ユーザー名、パスワードがないため、実クラスタ作成と live query は実行できない。レビュー時は `.env.example` をもとに接続情報を設定して `pnpm demo` を実行する。
+この作業環境には TiDB Zero アカウント、クラスタ作成権限、接続先ホスト、ユーザー名、パスワードがないため、実クラスタ作成と live query は実行できない。レビュー時は `pnpm tidb-zero:env -- --create` または `.env.example` をもとに接続情報を設定して `pnpm demo` を実行する。
