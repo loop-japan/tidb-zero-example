@@ -13,8 +13,8 @@ SELECT
   id,
   title,
   category,
-  MATCH(title, body) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE) AS score
+  MATCH(search_text) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE) AS score
 FROM tidb_zero_documents
-WHERE MATCH(title, body) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE)
+WHERE MATCH(search_text) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE)
 ORDER BY score DESC, id ASC
 LIMIT 3;

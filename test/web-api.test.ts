@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   connectionConfigFromInput,
+  connectionDefaultsFromEnv,
   dryRunPlan,
   formatStepError,
   parseEmbeddingLiteral,
@@ -29,6 +30,17 @@ test('web helpers validate connection input and redact secrets', () => {
     database: 'test',
     ssl: true
   });
+});
+
+test('web defaults include local .env password for same-machine UI only', () => {
+  const previous = process.env.TIDB_PASSWORD;
+  try {
+    process.env.TIDB_PASSWORD = 'secret-from-env';
+    assert.equal(connectionDefaultsFromEnv().password, 'secret-from-env');
+  } finally {
+    if (previous === undefined) delete process.env.TIDB_PASSWORD;
+    else process.env.TIDB_PASSWORD = previous;
+  }
 });
 
 test('step query helpers preserve demo defaults and validate bounds', () => {

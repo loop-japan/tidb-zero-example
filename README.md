@@ -77,14 +77,14 @@ pnpm web
 
 Web UI では以下を 1 ステップずつ実行できます。
 
-1. TiDB 接続情報をフォームに入力（`.env` がある場合は host / port / user / database / SSL の初期値として読み込み）
+1. TiDB 接続情報をフォームに入力（`.env` がある場合は host / port / user / password / database / SSL の初期値としてローカル API から読み込み）
 2. Connect / health check: `SELECT VERSION(), DATABASE()` で接続確認
 3. Initialize + import: demo テーブル作成と fixture upsert
 4. Vector Search: `VEC_COSINE_DISTANCE` 検索を任意の query vector / Top K で実行
-5. Full-text Search: `MATCH(title, body) AGAINST` 検索を任意キーワードで実行
+5. Full-text Search: `MATCH(search_text) AGAINST` 検索を任意キーワードで実行
 6. Inspect table: index と `SHOW CREATE TABLE` の確認
 
-認証情報はリポジトリに含めません。Web UI のパスワード欄はファイル保存されず、各 API 呼び出しでローカルサーバに送信されるだけです。`.env` からもパスワードは UI 初期値として返しません。
+認証情報はリポジトリに含めません。Web UI は `127.0.0.1` に bind するローカル開発サーバ専用で、`.env` の `TIDB_PASSWORD` をパスワード欄の初期値として読み込めます。パスワード欄の値はファイル保存されず、各 API 呼び出しで同じローカルサーバへ送信されるだけです。共有環境では `.env` を置いたまま Web UI を起動しないでください。
 
 ## 期待される確認内容
 
@@ -93,7 +93,7 @@ Web UI では以下を 1 ステップずつ実行できます。
 - `tableRowCount` が `importedRows` 以上であること
 - `vectorSearch.rows[0].title` が `TiDB Vector Search` であること
 - `fullTextSearch.rows` に `Full-text search for product docs` が含まれること
-- `indexes` に `ft_title_body` が含まれること
+- `indexes` に `ft_search_text` が含まれ、対象カラムが `search_text` の 1 カラムだけであること
 
 ## ローカルで検証できること / できないこと
 
