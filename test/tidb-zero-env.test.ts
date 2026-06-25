@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, readFile, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -97,4 +97,37 @@ test('runCli converts a saved response without logging secrets', async () => {
   assert.match(generated, /TIDB_PASSWORD="secret#value with spaces"/);
   assert.match(stdout, /password redacted/);
   assert.doesNotMatch(stdout, /secret#value/);
+});
+
+test('runCli forces overwritten secret files to 0600', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'tidb-zero-env-mode-'));
+  const responsePath = join(dir, 'tidb-zero.json');
+  const envPath = join(dir, '.env');
+  await writeFile(responsePath, `${JSON.stringify(sampleResponse)}\n`);
+  await writeFile(envPath, 'TIDB_PASSWORD=old-secret\n', { mode: 0o644 });
+  await chmod(envPath, 0o644);
+
+  await runCli(['--', '--from', responsePath, '--env', envPath, '--force']);
+
+  const mode = (await stat(envPath)).mode & 0o777;
+  assert.equal(mode, 0o600);
+});
+
+test('runCli forces overwritten API response files to 0600', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'tidb-zero-response-mode-'));
+  const responsePath = join(dir, 'tidb-zero.json');
+  const envPath = join(dir, '.env');
+  await writeFile(responsePath, '{"old":true}\n', { mode: 0o644 });
+  await chmod(responsePath, 0o644);
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async () => new Response(JSON.stringify(sampleResponse), { status: 200 })) as typeof fetch;
+  try {
+    await runCli(['--', '--create', '--response', responsePath, '--env', envPath, '--force']);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  const mode = (await stat(responsePath)).mode & 0o777;
+  assert.equal(mode, 0o600);
 });

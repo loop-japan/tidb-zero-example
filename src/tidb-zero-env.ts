@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -324,6 +324,12 @@ async function readJsonFile(path: string): Promise<unknown> {
   }
 }
 
+async function writeSecretFile(path: string, content: string): Promise<void> {
+  await ensureParentDirectory(path);
+  await writeFile(path, content, { mode: 0o600 });
+  await chmod(path, 0o600);
+}
+
 async function createTidbZeroInstance(options: CliOptions): Promise<unknown> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   const apiKey = process.env[options.apiKeyEnv];
@@ -367,12 +373,10 @@ export async function runCli(args = process.argv.slice(2)): Promise<void> {
   if (options.create) await assertWritableTarget(options.responsePath, options.force);
 
   if (options.create) {
-    await ensureParentDirectory(options.responsePath);
-    await writeFile(options.responsePath, `${JSON.stringify(response, null, 2)}\n`, { mode: 0o600 });
+    await writeSecretFile(options.responsePath, `${JSON.stringify(response, null, 2)}\n`);
   }
 
-  await ensureParentDirectory(options.envPath);
-  await writeFile(options.envPath, renderEnv(envConfig), { mode: 0o600 });
+  await writeSecretFile(options.envPath, renderEnv(envConfig));
 
   const savedResponseMessage = options.create ? ` Saved API response to ${options.responsePath}; keep it private.` : '';
   process.stdout.write(`Wrote ${options.envPath} for ${envConfig.host}:${envConfig.port} as ${envConfig.user} (password redacted).${savedResponseMessage}\n`);
@@ -390,4 +394,3 @@ if (isMainModule()) {
     process.exitCode = 1;
   });
 }
-
