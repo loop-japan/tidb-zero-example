@@ -12,12 +12,12 @@
 ## 2. データ import
 
 ```bash
-npm install
-npm run dry-run
-npm run demo
+pnpm install
+pnpm dry-run
+pnpm demo
 ```
 
-`npm run demo` は以下を実行する。
+`pnpm demo` は以下を実行する。
 
 1. `tidb_zero_documents` テーブルを作成する。
 2. `src/fixture.mjs` の 4 件の文書と 3 次元 embedding を upsert する。
@@ -53,4 +53,4 @@ LIMIT 3;
 
 ## 5. ブロッカー
 
-この作業環境には TiDB Zero アカウント、クラスタ作成権限、接続先ホスト、ユーザー名、パスワードがないため、実クラスタ作成と live query は実行できない。レビュー時は `.env.example` をもとに接続情報を設定して `npm run demo` を実行する。
+この作業環境には TiDB Zero アカウント、クラスタ作成権限、接続先ホスト、ユーザー名、パスワードがないため、実クラスタ作成と live query は実行できない。レビュー時は `.env.example` をもとに接続情報を設定して `pnpm demo` を実行する。

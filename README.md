@@ -24,16 +24,16 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 ```bash
 cp .env.example .env
 # .env を編集して TIDB_HOST / TIDB_USER / TIDB_PASSWORD / TIDB_DATABASE を設定
-npm install
-npm run dry-run
-npm run demo
+pnpm install
+pnpm dry-run
+pnpm demo
 ```
 
 既存テーブルを作り直したい場合のみ、`.env` に `TIDB_RESET=true` を設定してください。
 
 ## 期待される確認内容
 
-`npm run demo` は JSON を出力します。以下を確認してください。
+`pnpm demo` は JSON を出力します。以下を確認してください。
 
 - `tableRowCount` が `importedRows` 以上であること
 - `vectorSearch.rows[0].title` が `TiDB Vector Search` であること
@@ -42,5 +42,5 @@ npm run demo
 
 ## ローカルで検証できること / できないこと
 
-- ローカルでは `npm test` と `npm run dry-run` により、fixture と SQL 生成の整合性を検証できます。
+- ローカルでは `pnpm test` と `pnpm dry-run` により、fixture と SQL 生成の整合性を検証できます。
 - TiDB Zero の申請、クラスタ作成、実データ import、実際の vector / full-text search 実行は、TiDB Zero アカウントとクラスタ接続情報が必要です。
