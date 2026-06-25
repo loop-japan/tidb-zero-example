@@ -30,11 +30,11 @@
           <label>Port <input name="port" type="number" min="1" max="65535" value="4000" required /></label>
           <label>User <input name="user" autocomplete="username" placeholder="<cluster-prefix>.root" required /></label>
           <label>Database <input name="database" autocomplete="off" value="test" required /></label>
-          <label class="span-2">Password <input name="password" type="password" autocomplete="current-password" placeholder="ブラウザに保存せず、この実行中だけ送信" required /></label>
+          <label class="span-2">Password <input name="password" type="password" autocomplete="current-password" placeholder=".env から読み込み、または手入力" required /></label>
           <label class="check"><input name="ssl" type="checkbox" checked /> TLS/SSL を使用する</label>
           <label class="check"><input name="reset" type="checkbox" /> import 前に demo テーブルを drop する</label>
         </form>
-        <p class="note">パスワードは画面に表示せず、API 呼び出しごとにローカルサーバへ送信します。サーバは認証情報をファイル保存しません。</p>
+        <p class="note">ローカルの <code>.env</code> に <code>TIDB_PASSWORD</code> がある場合はパスワード欄に初期入力します。値はファイル保存せず、API 呼び出しごとに同じローカルサーバへ送信します。</p>
       </section>
 
       <section class="steps" aria-label="TiDB Zero test steps">
@@ -46,7 +46,7 @@
 
         <article class="step-card" data-step="initialize">
           <div class="step-title"><span>3</span><h3>Initialize + import sample data</h3></div>
-          <p><code>VECTOR(3)</code> と <code>FULLTEXT</code> index を持つテーブルを作り、fixture を upsert します。</p>
+          <p><code>VECTOR(3)</code> と <code>search_text</code> 1 カラムの <code>FULLTEXT</code> index を持つテーブルを作り、fixture を upsert します。</p>
           <button data-action="initialize">初期化・投入</button>
         </article>
 

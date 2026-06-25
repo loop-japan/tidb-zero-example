@@ -5,20 +5,22 @@ CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (
   id INT NOT NULL PRIMARY KEY,
   title VARCHAR(200) NOT NULL,
   body TEXT NOT NULL,
+  search_text TEXT NOT NULL,
   category VARCHAR(64) NOT NULL,
   embedding VECTOR(3) NOT NULL,
-  FULLTEXT KEY ft_title_body (title, body)
+  FULLTEXT KEY ft_search_text (search_text)
 );
 `.trim();
 
 export const dropTableSql = `DROP TABLE IF EXISTS ${TABLE_NAME};`;
 
 export const upsertSql = `
-INSERT INTO ${TABLE_NAME} (id, title, body, category, embedding)
-VALUES (?, ?, ?, ?, ?)
+INSERT INTO ${TABLE_NAME} (id, title, body, search_text, category, embedding)
+VALUES (?, ?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE
   title = VALUES(title),
   body = VALUES(body),
+  search_text = VALUES(search_text),
   category = VALUES(category),
   embedding = VALUES(embedding);
 `.trim();
@@ -41,9 +43,9 @@ SELECT
   id,
   title,
   category,
-  MATCH(title, body) AGAINST (? IN NATURAL LANGUAGE MODE) AS score
+  MATCH(search_text) AGAINST (? IN NATURAL LANGUAGE MODE) AS score
 FROM ${TABLE_NAME}
-WHERE MATCH(title, body) AGAINST (? IN NATURAL LANGUAGE MODE)
+WHERE MATCH(search_text) AGAINST (? IN NATURAL LANGUAGE MODE)
 ORDER BY score DESC, id ASC
 LIMIT ?;
 `.trim();

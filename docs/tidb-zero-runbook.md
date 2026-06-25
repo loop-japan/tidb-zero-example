@@ -5,7 +5,7 @@
 1. TiDB Cloud コンソールで TiDB Zero（または互換の Starter/Essential）を作成/申請する。
 2. 機能要件を確認する。
    - Vector Search: `VECTOR(3)` 型と `VEC_COSINE_DISTANCE()` を利用する。
-   - Full-text Search: `FULLTEXT KEY` と `MATCH(...) AGAINST(...)` を利用する。FULLTEXT は TiDB Cloud Starter/Essential の一部 AWS リージョンでのみサポートされるため、作成時に対応リージョンを選ぶ。
+   - Full-text Search: TiDB 互換性のため、title/body を結合した `search_text` 1 カラムだけに `FULLTEXT KEY` を作り、`MATCH(search_text) AGAINST(...)` を利用する。FULLTEXT は TiDB Cloud Starter/Essential の一部 AWS リージョンでのみサポートされるため、作成時に対応リージョンを選ぶ。
 3. TiDB Zero quickstart/API (`POST https://zero.tidbapi.com/v1beta1/instances`) または Connect ダイアログから MySQL 接続情報を取得する。
 4. `pnpm tidb-zero:env -- --create` で TiDB Zero API から直接 `.env` を生成するか、保存済みレスポンスを `pnpm tidb-zero:env -- --from tidb-zero.json` で変換する。パスワードや秘密情報は commit しない。
 
@@ -46,9 +46,9 @@ LIMIT 3;
 
 ```sql
 SELECT id, title, category,
-       MATCH(title, body) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE) AS score
+       MATCH(search_text) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE) AS score
 FROM tidb_zero_documents
-WHERE MATCH(title, body) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE)
+WHERE MATCH(search_text) AGAINST ('product documentation' IN NATURAL LANGUAGE MODE)
 ORDER BY score DESC, id ASC
 LIMIT 3;
 ```

@@ -46,6 +46,10 @@ export const DOCUMENTS = [
 export const VECTOR_QUERY = [0.90, 0.08, 0.02] as const satisfies Embedding;
 export const FULLTEXT_QUERY = 'product documentation' as const;
 
+export function toSearchText(doc: Pick<DocumentFixture, 'title' | 'body'>): string {
+  return `${doc.title}\n${doc.body}`;
+}
+
 export function toVectorLiteral(values: readonly number[]): string {
   if (!Array.isArray(values) || values.length === 0) {
     throw new TypeError('embedding must be a non-empty numeric array');

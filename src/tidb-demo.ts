@@ -4,6 +4,7 @@ import {
   FULLTEXT_QUERY,
   TABLE_NAME,
   VECTOR_QUERY,
+  toSearchText,
   toVectorLiteral,
   type Embedding
 } from './fixture.js';
@@ -94,6 +95,7 @@ export interface DryRunRow {
   id: number;
   title: string;
   body: string;
+  search_text: string;
   category: string;
   embedding: string;
 }
@@ -190,6 +192,7 @@ export function connectionDefaultsFromEnv(): Partial<TiDbConnectionInput> {
     host: optionalEnv('TIDB_HOST'),
     port: process.env.TIDB_PORT ?? 4000,
     user: optionalEnv('TIDB_USER'),
+    password: optionalEnv('TIDB_PASSWORD'),
     database: optionalEnv('TIDB_DATABASE'),
     ssl: boolEnv('TIDB_SSL', true)
   };
@@ -232,6 +235,7 @@ export function redactConfig(config: TiDbConnectionConfig): RedactedConnectionCo
 export function dryRunPlan(): DryRunPlan {
   const rows: DryRunRow[] = DOCUMENTS.map((doc) => ({
     ...doc,
+    search_text: toSearchText(doc),
     embedding: toVectorLiteral(doc.embedding)
   }));
   return {
@@ -321,6 +325,7 @@ export async function initializeAndImport(config: TiDbConnectionConfig, reset = 
         doc.id,
         doc.title,
         doc.body,
+        toSearchText(doc),
         doc.category,
         toVectorLiteral(doc.embedding)
       ]);

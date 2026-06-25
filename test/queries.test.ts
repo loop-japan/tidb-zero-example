@@ -27,7 +27,8 @@ test('vector fixture ranks the vector document first', () => {
 
 test('SQL contains TiDB vector and full-text constructs', () => {
   assert.match(createTableSql, /embedding VECTOR\(3\)/);
-  assert.match(createTableSql, /FULLTEXT KEY ft_title_body/);
+  assert.match(createTableSql, /search_text TEXT NOT NULL/);
+  assert.match(createTableSql, /FULLTEXT KEY ft_search_text \(search_text\)/);
   assert.match(vectorSearchSql, /VEC_COSINE_DISTANCE/);
-  assert.match(fullTextSearchSql, /MATCH\(title, body\) AGAINST/);
+  assert.match(fullTextSearchSql, /MATCH\(search_text\) AGAINST/);
 });
