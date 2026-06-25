@@ -5,9 +5,12 @@
   "type": "module",
   "description": "TiDB Zero demo scaffold for data import, vector search, and full-text search testing.",
   "scripts": {
-    "dry-run": "node src/import-and-test.mjs --dry-run",
-    "demo": "node src/import-and-test.mjs",
-    "test": "node --test test/**/*.test.mjs"
+    "dry-run": "tsx src/import-and-test.ts --dry-run",
+    "demo": "tsx src/import-and-test.ts",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/import-and-test.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -16,5 +19,10 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.33.2"
+  "packageManager": "pnpm@10.33.2",
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
 }

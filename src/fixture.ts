@@ -1,4 +1,14 @@
-export const TABLE_NAME = 'tidb_zero_documents';
+export const TABLE_NAME = 'tidb_zero_documents' as const;
+
+export type Embedding = readonly [number, number, number];
+
+export interface DocumentFixture {
+  readonly id: number;
+  readonly title: string;
+  readonly body: string;
+  readonly category: 'vector' | 'fulltext' | 'hybrid' | 'ops';
+  readonly embedding: Embedding;
+}
 
 // Tiny deterministic fixture: 3-dimensional embeddings keep the demo readable and
 // match PingCAP's SQL quickstart style. Replace with production embeddings later.
@@ -31,12 +41,12 @@ export const DOCUMENTS = [
     category: 'ops',
     embedding: [0.05, 0.10, 0.85]
   }
-];
+] as const satisfies readonly DocumentFixture[];
 
-export const VECTOR_QUERY = [0.90, 0.08, 0.02];
-export const FULLTEXT_QUERY = 'product documentation';
+export const VECTOR_QUERY = [0.90, 0.08, 0.02] as const satisfies Embedding;
+export const FULLTEXT_QUERY = 'product documentation' as const;
 
-export function toVectorLiteral(values) {
+export function toVectorLiteral(values: readonly number[]): string {
   if (!Array.isArray(values) || values.length === 0) {
     throw new TypeError('embedding must be a non-empty numeric array');
   }
