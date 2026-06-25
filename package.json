@@ -7,6 +7,8 @@
   "scripts": {
     "dry-run": "tsx src/import-and-test.ts --dry-run",
     "demo": "tsx src/import-and-test.ts",
+    "web": "tsx src/web-server.ts",
+    "start:web": "tsx src/web-server.ts",
     "test": "node --import tsx --test test/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.json",
