@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { DOCUMENTS, VECTOR_QUERY, toVectorLiteral } from '../src/fixture.mjs';
-import { createTableSql, fullTextSearchSql, vectorSearchSql } from '../src/sql.mjs';
+import { DOCUMENTS, VECTOR_QUERY, toVectorLiteral, type Embedding } from '../src/fixture.js';
+import { createTableSql, fullTextSearchSql, vectorSearchSql } from '../src/sql.js';
 
-function cosineDistance(a, b) {
+function cosineDistance(a: Embedding, b: Embedding): number {
   const dot = a.reduce((sum, value, index) => sum + value * b[index], 0);
   const normA = Math.sqrt(a.reduce((sum, value) => sum + value * value, 0));
   const normB = Math.sqrt(b.reduce((sum, value) => sum + value * value, 0));
@@ -22,7 +22,7 @@ test('vector fixture ranks the vector document first', () => {
   const [first] = DOCUMENTS
     .map((doc) => ({ id: doc.id, distance: cosineDistance(doc.embedding, VECTOR_QUERY) }))
     .sort((a, b) => a.distance - b.distance);
-  assert.equal(first.id, 1);
+  assert.equal(first?.id, 1);
 });
 
 test('SQL contains TiDB vector and full-text constructs', () => {

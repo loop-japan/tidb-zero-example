@@ -6,8 +6,8 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 
 ## 構成
 
-- `src/import-and-test.mjs`: テーブル作成、データ投入、ベクトル検索、全文検索を実行する Node.js スクリプト
-- `src/fixture.mjs`: デモ用データと検索クエリ
+- `src/import-and-test.ts`: テーブル作成、データ投入、ベクトル検索、全文検索を実行する TypeScript/Node.js スクリプト
+- `src/fixture.ts`: デモ用データと検索クエリ
 - `sql/schema.sql`: 手動確認用 DDL
 - `sql/sample-queries.sql`: 手動確認用検索 SQL
 - `docs/tidb-zero-runbook.md`: クラスタ申請/作成からレビューまでの手順
@@ -43,4 +43,5 @@ pnpm demo
 ## ローカルで検証できること / できないこと
 
 - ローカルでは `pnpm test` と `pnpm dry-run` により、fixture と SQL 生成の整合性を検証できます。
+- TypeScript の型チェックとビルドは `pnpm typecheck` / `pnpm build` で実行できます。ビルド成果物は `dist/` に出力されます。
 - TiDB Zero の申請、クラスタ作成、実データ import、実際の vector / full-text search 実行は、TiDB Zero アカウントとクラスタ接続情報が必要です。

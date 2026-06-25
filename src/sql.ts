@@ -1,4 +1,4 @@
-import { TABLE_NAME } from './fixture.mjs';
+import { TABLE_NAME } from './fixture.js';
 
 export const createTableSql = `
 CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (

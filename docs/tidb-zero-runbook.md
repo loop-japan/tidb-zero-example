@@ -14,13 +14,16 @@
 ```bash
 pnpm install
 pnpm dry-run
+pnpm test
+pnpm typecheck
+pnpm build
 pnpm demo
 ```
 
 `pnpm demo` は以下を実行する。
 
 1. `tidb_zero_documents` テーブルを作成する。
-2. `src/fixture.mjs` の 4 件の文書と 3 次元 embedding を upsert する。
+2. `src/fixture.ts` の 4 件の文書と 3 次元 embedding を upsert する。
 3. 件数、index、`SHOW CREATE TABLE` を取得する。
 
 ## 3. Vector Search テスト
