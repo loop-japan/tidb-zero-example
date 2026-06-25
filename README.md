@@ -6,7 +6,10 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 
 ## 構成
 
-- `src/import-and-test.ts`: テーブル作成、データ投入、ベクトル検索、全文検索を実行する TypeScript/Node.js スクリプト
+- `src/import-and-test.ts`: テーブル作成、データ投入、ベクトル検索、全文検索を一括実行する TypeScript/Node.js CLI
+- `src/web-server.ts`: Web UI とステップ実行 API を提供するローカルサーバ
+- `src/tidb-demo.ts`: CLI と Web UI で共有する TiDB 接続/検索ロジック
+- `public/`: ブラウザからステップごとに TiDB Zero テストを実行するグラフィカル UI
 - `src/fixture.ts`: デモ用データと検索クエリ
 - `sql/schema.sql`: 手動確認用 DDL
 - `sql/sample-queries.sql`: 手動確認用検索 SQL
@@ -19,7 +22,7 @@ TiDB Zero / TiDB Cloud Starter 互換の MySQL 接続先に、少量のサンプ
 2. Vector Search と FULLTEXT を検証したい場合は、対象リージョンが両機能をサポートしていることを確認します。TiDB 公式ドキュメントでは、Vector Search は Starter/Essential 等で利用可能、FULLTEXT index は一部 AWS リージョンの Starter/Essential でのみ利用可能とされています。
 3. クラスタ画面の **Connect** から Public endpoint / MySQL CLI の接続情報を取得し、ユーザー名（例: `<prefix>.root`）、ホスト、ポート、パスワード、DB 名を控えます。
 
-## 実行方法
+## CLI での実行方法
 
 ```bash
 cp .env.example .env
@@ -30,6 +33,25 @@ pnpm demo
 ```
 
 既存テーブルを作り直したい場合のみ、`.env` に `TIDB_RESET=true` を設定してください。
+
+## Web UI でステップ実行する方法
+
+```bash
+pnpm install
+pnpm web
+# ブラウザで http://127.0.0.1:4173 を開く
+```
+
+Web UI では以下を 1 ステップずつ実行できます。
+
+1. TiDB 接続情報をフォームに入力（`.env` がある場合は host / port / user / database / SSL の初期値として読み込み）
+2. Connect / health check: `SELECT VERSION(), DATABASE()` で接続確認
+3. Initialize + import: demo テーブル作成と fixture upsert
+4. Vector Search: `VEC_COSINE_DISTANCE` 検索を任意の query vector / Top K で実行
+5. Full-text Search: `MATCH(title, body) AGAINST` 検索を任意キーワードで実行
+6. Inspect table: index と `SHOW CREATE TABLE` の確認
+
+認証情報はリポジトリに含めません。Web UI のパスワード欄はファイル保存されず、各 API 呼び出しでローカルサーバに送信されるだけです。`.env` からもパスワードは UI 初期値として返しません。
 
 ## 期待される確認内容
 
@@ -42,6 +64,6 @@ pnpm demo
 
 ## ローカルで検証できること / できないこと
 
-- ローカルでは `pnpm test` と `pnpm dry-run` により、fixture と SQL 生成の整合性を検証できます。
+- ローカルでは `pnpm test` と `pnpm dry-run` により、fixture、SQL 生成、Web API 入力検証の整合性を検証できます。
 - TypeScript の型チェックとビルドは `pnpm typecheck` / `pnpm build` で実行できます。ビルド成果物は `dist/` に出力されます。
 - TiDB Zero の申請、クラスタ作成、実データ import、実際の vector / full-text search 実行は、TiDB Zero アカウントとクラスタ接続情報が必要です。

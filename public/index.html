@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TiDB Zero Step Tester</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">TiDB Zero / TiDB Cloud Starter</p>
+        <h1>Step-by-step TiDB Zero tester</h1>
+        <p class="lead">接続確認、サンプルデータ投入、Vector Search、Full-text Search を Web UI から順番に実行します。</p>
+      </div>
+      <div class="badge" id="envBadge">Loading defaults…</div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Connection</p>
+            <h2>1. TiDB 接続情報</h2>
+          </div>
+          <button class="ghost" id="loadDefaultsButton" type="button">環境変数を再読込</button>
+        </div>
+        <form id="connectionForm" class="grid-form">
+          <label>Host <input name="host" autocomplete="off" placeholder="gateway01...tidbcloud.com" required /></label>
+          <label>Port <input name="port" type="number" min="1" max="65535" value="4000" required /></label>
+          <label>User <input name="user" autocomplete="username" placeholder="<cluster-prefix>.root" required /></label>
+          <label>Database <input name="database" autocomplete="off" value="test" required /></label>
+          <label class="span-2">Password <input name="password" type="password" autocomplete="current-password" placeholder="ブラウザに保存せず、この実行中だけ送信" required /></label>
+          <label class="check"><input name="ssl" type="checkbox" checked /> TLS/SSL を使用する</label>
+          <label class="check"><input name="reset" type="checkbox" /> import 前に demo テーブルを drop する</label>
+        </form>
+        <p class="note">パスワードは画面に表示せず、API 呼び出しごとにローカルサーバへ送信します。サーバは認証情報をファイル保存しません。</p>
+      </section>
+
+      <section class="steps" aria-label="TiDB Zero test steps">
+        <article class="step-card" data-step="connect">
+          <div class="step-title"><span>2</span><h3>Connect / health check</h3></div>
+          <p>TiDB へ接続し、<code>SELECT VERSION()</code> と選択 DB を確認します。</p>
+          <button data-action="connect">接続確認</button>
+        </article>
+
+        <article class="step-card" data-step="initialize">
+          <div class="step-title"><span>3</span><h3>Initialize + import sample data</h3></div>
+          <p><code>VECTOR(3)</code> と <code>FULLTEXT</code> index を持つテーブルを作り、fixture を upsert します。</p>
+          <button data-action="initialize">初期化・投入</button>
+        </article>
+
+        <article class="step-card" data-step="vector-search">
+          <div class="step-title"><span>4</span><h3>Vector Search</h3></div>
+          <label>Vector query <input id="vectorQuery" value="[0.9,0.08,0.02]" /></label>
+          <label>Top K <input id="topK" type="number" min="1" max="50" value="3" /></label>
+          <button data-action="vector-search">ベクトル検索を実行</button>
+        </article>
+
+        <article class="step-card" data-step="fulltext-search">
+          <div class="step-title"><span>5</span><h3>Full-text Search</h3></div>
+          <label>Keyword query <input id="fullTextQuery" value="product documentation" /></label>
+          <button data-action="fulltext-search">全文検索を実行</button>
+        </article>
+
+        <article class="step-card" data-step="inspect">
+          <div class="step-title"><span>6</span><h3>Inspect table</h3></div>
+          <p>作成済みテーブルと index 定義を表示し、レビュー用に JSON を確認します。</p>
+          <button data-action="inspect">テーブル情報を表示</button>
+        </article>
+      </section>
+
+      <section class="panel output-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Results</p>
+            <h2>実行結果</h2>
+          </div>
+          <button class="ghost" id="clearButton" type="button">クリア</button>
+        </div>
+        <ol id="statusList" class="status-list"></ol>
+        <pre id="jsonOutput" aria-live="polite">Dry-run metadata will appear here.</pre>
+      </section>
+    </main>
+
+    <template id="statusTemplate">
+      <li>
+        <span class="dot"></span>
+        <strong></strong>
+        <small></small>
+      </li>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
